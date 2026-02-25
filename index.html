@@ -4,285 +4,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Picasso. Visión de un Genio | Museo Bellas Artes Asturias</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.7"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.26.10/babel.min.js"></script>
-    <script type="importmap">
-    {
-        "imports": {
-            "react": "https://esm.sh/react@18.3.1",
-            "react/": "https://esm.sh/react@18.3.1/",
-            "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
-            "lucide-react": "https://esm.sh/lucide-react@0.474.0?external=react"
+    <title>Picasso: Visión de un Genio | Museo de Bellas Artes de Asturias</title>
+    <!-- Librerías de alta compatibilidad -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #fff; }
+        h1, h2, .font-serif { font-family: 'Playfair Display', serif; }
+        
+        .bg-picasso {
+            background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
         }
-    }
-    </script>
+        
+        .timeline-line {
+            background: linear-gradient(to bottom, #3b82f6, #ec4899, #f59e0b);
+        }
+
+        .card-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
 </head>
 <body>
     <div id="root"></div>
-    <script type="text/babel" data-type="module" data-presets="react">
-        import React, { useState, useEffect, useRef } from 'react';
-        import { createRoot } from 'react-dom/client';
-        import { ChevronDown, Clock, MapPin, Ticket, Info } from 'lucide-react';
 
-        // Obras de Picasso significativas (30 obras)
-        const obras = [
-            { id: 1, titulo: "La Vie", año: 1903, periodo: "Período Azul", importancia: 5 },
-            { id: 2, titulo: "Retrato de Gertrude Stein", año: 1905, periodo: "Período Rosa", importancia: 5 },
-            { id: 3, titulo: "Les Demoiselles d'Avignon", año: 1907, periodo: "Proto-cubismo", importancia: 5 },
-            { id: 4, titulo: "El Aficionado (Fan)", año: 1909, periodo: "Cubismo analítico", importancia: 4 },
-            { id: 5, titulo: "Naturaleza muerta con guitarra", año: 1909, periodo: "Cubismo analítico", importancia: 4 },
-            { id: 6, titulo: "Fábrica Horta de Ebro", año: 1909, periodo: "Cubismo analítico", importancia: 4 },
-            { id: 7, titulo: "Mandolina", año: 1910, periodo: "Cubismo analítico", importancia: 3 },
-            { id: 8, titulo: "Portrait of Wilhelm Uhde", año: 1910, periodo: "Cubismo analítico", importancia: 4 },
-            { id: 9, titulo: "El acordeonista", año: 1911, periodo: "Cubismo analítico", importancia: 4 },
-            { id: 10, titulo: "Guitarrista", año: 1910, periodo: "Cubismo analítico", importancia: 3 },
-            { id: 11, titulo: "Naturaleza muerta con jarra y manzanas", año: 1912, periodo: "Cubismo sintético", importancia: 4 },
-            { id: 12, titulo: "Botella de Vieux Marc", año: 1912, periodo: "Cubismo sintético", importancia: 3 },
-            { id: 13, titulo: "Violín colgado en la pared", año: 1913, periodo: "Cubismo sintético", importancia: 4 },
-            { id: 14, titulo: "Naturaleza muerta ante una ventana", año: 1915, periodo: "Cubismo sintético", importancia: 3 },
-            { id: 15, titulo: "Hombre con pipa", año: 1914, periodo: "Cubismo sintético", importancia: 3 },
-            { id: 16, titulo: "Autorretrato", año: 1917, periodo: "Transición", importancia: 4 },
-            { id: 17, titulo: "Mujer sentada", año: 1923, periodo: "Clasicismo", importancia: 4 },
-            { id: 18, titulo: "Las tres bailarinas", año: 1925, periodo: "Surrealismo", importancia: 5 },
-            { id: 19, titulo: "Guitarra", año: 1926, periodo: "Surrealismo", importancia: 3 },
-            { id: 20, titulo: "Naturaleza muerta con lámpara", año: 1927, periodo: "Surrealismo", importancia: 3 },
-            { id: 21, titulo: "Crucifixión", año: 1930, periodo: "Expresionismo", importancia: 5 },
-            { id: 22, titulo: "Girl Before a Mirror", año: 1932, periodo: "Surrealismo", importancia: 5 },
-            { id: 23, titulo: "Minotaur and Sleeping Woman", año: 1933, periodo: "Surrealismo", importancia: 4 },
-            { id: 24, titulo: "Guernica", año: 1937, periodo: "Modernismo", importancia: 5 },
-            { id: 25, titulo: "Weeping Woman", año: 1937, periodo: "Modernismo", importancia: 5 },
-            { id: 26, titulo: "Naturaleza muerta con velas", año: 1944, periodo: "Modernismo", importancia: 3 },
-            { id: 27, titulo: "La Cabaña (L'Aubette)", año: 1950, periodo: "Post-guerra", importancia: 4 },
-            { id: 28, titulo: "Las Meninas (variación)", año: 1957, periodo: "Expresionismo", importancia: 5 },
-            { id: 29, titulo: "Paloma de la Paz", año: 1949, periodo: "Post-guerra", importancia: 5 },
-            { id: 30, titulo: "Retrato de Jacqueline", año: 1962, periodo: "Expresionismo", importancia: 4 }
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const obrasPicasso = [
+            { id: 1, titulo: "La Vida", año: 1903, periodo: "Azul" },
+            { id: 2, titulo: "Dama en azul", año: 1901, periodo: "Azul" },
+            { id: 3, titulo: "El viejo guitarrista", año: 1903, periodo: "Azul" },
+            { id: 4, titulo: "La familia de saltimbanquis", año: 1905, periodo: "Rosa" },
+            { id: 5, titulo: "Muchacho con pipa", año: 1905, periodo: "Rosa" },
+            { id: 6, titulo: "Retrato de Gertrude Stein", año: 1906, periodo: "Rosa" },
+            { id: 7, titulo: "Las señoritas de Avignon", año: 1907, periodo: "Protocubismo" },
+            { id: 8, titulo: "Mujer con abanico", año: 1908, periodo: "Protocubismo" },
+            { id: 9, titulo: "Casas en Horta", año: 1909, periodo: "Cubismo Analítico" },
+            { id: 10, titulo: "Retrato de Daniel-Henry Kahnweiler", año: 1910, periodo: "Cubismo Analítico" },
+            { id: 11, titulo: "Naturaleza muerta con silla de rejilla", año: 1912, periodo: "Cubismo Sintético" },
+            { id: 12, titulo: "Guitarra", año: 1913, periodo: "Cubismo Sintético" },
+            { id: 13, titulo: "Los tres músicos", año: 1921, periodo: "Clasicismo" },
+            { id: 14, titulo: "Mujeres corriendo en la playa", año: 1922, periodo: "Clasicismo" },
+            { id: 15, titulo: "La danza", año: 1925, periodo: "Surrealismo" },
+            { id: 16, titulo: "Bañista sentada", año: 1930, periodo: "Surrealismo" },
+            { id: 17, titulo: "Muchacha ante un espejo", año: 1932, periodo: "Surrealismo" },
+            { id: 18, titulo: "El sueño", año: 1932, periodo: "Surrealismo" },
+            { id: 19, titulo: "Guernica", año: 1937, periodo: "Guerra Civil" },
+            { id: 20, titulo: "La mujer que llora", año: 1937, periodo: "Guerra Civil" },
+            { id: 21, titulo: "Maya con su muñeca", año: 1938, periodo: "Expresionismo" },
+            { id: 22, titulo: "Gato devorando un pájaro", año: 1939, periodo: "Expresionismo" },
+            { id: 23, titulo: "Naturaleza muerta con cráneo de buey", año: 1942, periodo: "Ocupación" },
+            { id: 24, titulo: "La alegría de vivir", año: 1946, periodo: "Postguerra" },
+            { id: 25, titulo: "La paloma de la paz", año: 1949, periodo: "Postguerra" },
+            { id: 26, titulo: "Masacre en Corea", año: 1951, periodo: "Socialismo" },
+            { id: 27, titulo: "Las mujeres de Argel", año: 1955, periodo: "Revisionismo" },
+            { id: 28, titulo: "Las Meninas (Serie)", año: 1957, periodo: "Revisionismo" },
+            { id: 29, titulo: "El pintor y la modelo", año: 1963, periodo: "Estilo Tardío" },
+            { id: 30, titulo: "Autorretrato ante la muerte", año: 1972, periodo: "Estilo Tardío" }
         ];
 
-        const periodos = [
-            { nombre: "Período Azul (1901-1904)", color: "#3B82F6", obras: [1] },
-            { nombre: "Período Rosa (1905-1906)", color: "#EC4899", obras: [2] },
-            { nombre: "Proto-cubismo (1907-1908)", color: "#8B5CF6", obras: [3] },
-            { nombre: "Cubismo Analítico (1909-1912)", color: "#10B981", obras: [4, 5, 6, 7, 8, 9, 10] },
-            { nombre: "Cubismo Sintético (1912-1920)", color: "#F59E0B", obras: [11, 12, 13, 14, 15] },
-            { nombre: "Transición (1920-1930)", color: "#06B6D4", obras: [16, 17] },
-            { nombre: "Surrealismo (1925-1939)", color: "#EF4444", obras: [18, 19, 20, 23] },
-            { nombre: "Expresionismo (1930-1950)", color: "#14B8A6", obras: [21, 22, 24, 25, 26, 28] },
-            { nombre: "Post-guerra (1949-1973)", color: "#F97316", obras: [27, 29, 30] }
+        const hitosCronologia = [
+            { epoca: "1901-1904", titulo: "Período Azul", color: "#3b82f6", desc: "Marcado por el suicidio de su amigo Casagemas. Obras monocromáticas en azul." },
+            { epoca: "1904-1906", titulo: "Período Rosa", color: "#ec4899", desc: "Temas circenses, arlequines y colores cálidos. Su estancia en París." },
+            { epoca: "1907-1915", titulo: "Invención del Cubismo", color: "#8b5cf6", desc: "Junto a Braque, rompe con la perspectiva tradicional y la tridimensionalidad." },
+            { epoca: "1917-1924", titulo: "Retorno al Orden", color: "#06b6d4", desc: "Influencias neoclásicas tras su viaje a Italia y colaboración con los Ballets Rusos." },
+            { epoca: "1925-1936", titulo: "Surrealismo", color: "#ef4444", desc: "Exploración de lo onírico y la metamorfosis del cuerpo humano." },
+            { epoca: "1937", titulo: "Guernica", color: "#ffffff", desc: "La cumbre del compromiso político. Grito contra el horror de la guerra." }
         ];
 
         function App() {
-            const [selectedPeriod, setSelectedPeriod] = useState(null);
-            const [scrollY, setScrollY] = useState(0);
-
             useEffect(() => {
-                const handleScroll = () => setScrollY(window.scrollY);
-                window.addEventListener("scroll", handleScroll);
-                return () => window.removeEventListener("scroll", handleScroll);
+                // Inicializar iconos de Lucide
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
             }, []);
 
             return (
-                <div className="bg-black text-white overflow-hidden">
-                    {/* Hero Section */}
-                    <section className="relative h-screen flex items-center justify-center overflow-hidden">
-                        {/* Fondo animado */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-black opacity-60"></div>
-                        <div 
-                            className="absolute inset-0 opacity-20"
-                            style={{
-                                backgroundImage: "url('data:image/svg+xml,%3Csvg width=%22100%22 height=%22100%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M10,10 Q20,20 30,10 T50,10%22 stroke=%22white%22 fill=%22none%22 stroke-width=%222%22/%3E%3C/svg%3E')",
-                                transform: `translateY(${scrollY * 0.5}px)`
-                            }}
-                        ></div>
-
-                        <div className="relative z-10 text-center px-4">
-                            <h1 className="text-7xl md:text-8xl font-bold mb-4 animate-fade-in">
-                                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                                    PICASSO
-                                </span>
-                            </h1>
-                            <p className="text-2xl md:text-3xl mb-8 text-gray-300 font-light">
-                                Visión de un Genio • 1901-1973
-                            </p>
-                            <p className="text-lg md:text-xl mb-12 text-gray-400 max-w-2xl mx-auto">
-                                Una retrospectiva de 30 obras maestras que revolucionaron el arte del siglo XX
-                            </p>
-                            
-                            <button className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-semibold text-lg transition transform hover:scale-105 mb-8">
-                                Explorar Exposición
-                            </button>
-
-                            <div className="flex justify-center gap-8 text-sm md:text-base">
-                                <div className="flex items-center gap-2">
-                                    <MapPin size={20} />
-                                    <span>Oviedo, Asturias</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Ticket size={20} />
-                                    <span>30 Obras</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Clock size={20} />
-                                    <span>1901-1973</span>
-                                </div>
-                            </div>
-
-                            <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-                                <ChevronDown size={32} />
-                            </div>
+                <div className="bg-picasso min-h-screen">
+                    {/* HERO SECTION */}
+                    <header className="relative h-screen flex flex-col items-center justify-center overflow-hidden px-6">
+                        <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
+                            <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500 rounded-full blur-[120px]"></div>
+                            <div className="absolute bottom-20 right-10 w-80 h-80 bg-pink-500 rounded-full blur-[150px]"></div>
                         </div>
-                    </section>
 
-                    {/* Información del Museo */}
-                    <section className="bg-gray-900 py-12 px-4 md:px-8">
-                        <div className="max-w-5xl mx-auto">
-                            <div className="grid md:grid-cols-2 gap-8">
-                                <div>
-                                    <h2 className="text-3xl font-bold mb-4 text-blue-400">Museo de Bellas Artes de Asturias</h2>
-                                    <p className="text-gray-300 mb-4">
-                                        Ubicado en el corazón de Oviedo, el Museo de Bellas Artes de Asturias alberga una de las más importantes colecciones de pintura española de los siglos XVI al XX.
-                                    </p>
-                                    <p className="text-gray-400 text-sm mb-6">
-                                        Descubre en esta exposición temporal una selección curada de obras maestras de Pablo Picasso, desde sus primeros períodos hasta sus últimas creaciones.
-                                    </p>
-                                </div>
-                                <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-                                    <h3 className="text-xl font-bold mb-4 text-purple-400">Información Práctica</h3>
-                                    <div className="space-y-3 text-sm">
-                                        <p><strong>Horarios:</strong> Mar-Vie 10:30-20:30 | Sáb 11:30-20:00 | Dom 11:30-14:30</p>
-                                        <p><strong>Entrada:</strong> Tarifa especial para la exposición</p>
-                                        <p><strong>Ubicación:</strong> Oviedo, Asturias, España</p>
-                                        <p><strong>Accesibilidad:</strong> Completamente accesible</p>
-                                        <p><strong>Servicios:</strong> Tienda, cafetería, audioguía disponible</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <p className="text-blue-400 font-semibold tracking-[0.3em] mb-4 uppercase text-sm animate-pulse">Exposición Temporal</p>
+                        <h1 className="text-7xl md:text-9xl font-black mb-6 text-center leading-none">
+                            PICASSO<br/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">ASTURIAS</span>
+                        </h1>
+                        <p className="max-w-xl text-center text-gray-400 text-lg md:text-xl mb-12 font-light">
+                            Una travesía visual por las 30 obras que cambiaron la historia del arte. 
+                            Del Museo de Bellas Artes de Asturias para el mundo.
+                        </p>
+                        
+                        <div className="flex flex-col md:flex-row gap-6">
+                            <button className="bg-white text-black px-10 py-4 rounded-full font-bold hover:scale-105 transition shadow-xl">ADQUIRIR ENTRADAS</button>
+                            <button className="border border-white/30 backdrop-blur-md px-10 py-4 rounded-full font-bold hover:bg-white/10 transition">CONOCER MÁS</button>
                         </div>
-                    </section>
 
-                    {/* Timeline / Chronology */}
-                    <section className="py-20 px-4 md:px-8 bg-black">
+                        <div className="absolute bottom-10 animate-bounce">
+                            <i data-lucide="chevron-down"></i>
+                        </div>
+                    </header>
+
+                    {/* INFOGRAFÍA CRONOLÓGICA */}
+                    <section className="py-24 px-6 bg-black">
                         <div className="max-w-6xl mx-auto">
-                            <h2 className="text-5xl font-bold mb-16 text-center">
-                                <span className="bg-gradient-to-r from-pink-400 to-blue-400 bg-clip-text text-transparent">
-                                    Cronología de Períodos
-                                </span>
-                            </h2>
+                            <div className="flex flex-col md:flex-row items-end justify-between mb-20">
+                                <div>
+                                    <h2 className="text-4xl md:text-5xl font-bold mb-4">CRONOLOGÍA</h2>
+                                    <p className="text-gray-500">La evolución estética de un genio inabarcable.</p>
+                                </div>
+                                <div className="hidden md:block text-right text-gray-600 font-mono">
+                                    ESTRUCTURA DE LA EXPOSICIÓN <br/> EDIFICIO AMPLIACIÓN
+                                </div>
+                            </div>
 
-                            {/* Timeline visual */}
-                            <div className="relative mb-20">
-                                <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 to-pink-500"></div>
+                            <div className="grid md:grid-cols-6 gap-4 relative">
+                                <div className="absolute top-1/2 left-0 w-full h-1 timeline-line hidden md:block opacity-20"></div>
                                 
-                                <div className="space-y-12">
-                                    {periodos.map((periodo, idx) => (
-                                        <div 
-                                            key={idx} 
-                                            className={`flex ${idx % 2 === 0 ? 'flex-row' : 'flex-row-reverse'} gap-8 items-center`}
-                                        >
-                                            <div className="flex-1"></div>
-                                            
-                                            <div 
-                                                className="w-12 h-12 rounded-full border-4 border-black bg-gray-900 flex items-center justify-center cursor-pointer hover:scale-125 transition"
-                                                style={{ borderColor: periodo.color }}
-                                                onClick={() => setSelectedPeriod(selectedPeriod === idx ? null : idx)}
-                                            >
-                                                <div 
-                                                    className="w-6 h-6 rounded-full"
-                                                    style={{ backgroundColor: periodo.color }}
-                                                ></div>
-                                            </div>
-
-                                            <div 
-                                                className="flex-1 p-4 md:p-6 rounded-lg border-2 cursor-pointer hover:shadow-lg transition"
-                                                style={{ 
-                                                    borderColor: periodo.color,
-                                                    backgroundColor: selectedPeriod === idx ? `${periodo.color}20` : 'transparent'
-                                                }}
-                                                onClick={() => setSelectedPeriod(selectedPeriod === idx ? null : idx)}
-                                            >
-                                                <h3 className="text-lg font-bold mb-2" style={{ color: periodo.color }}>
-                                                    {periodo.nombre}
-                                                </h3>
-                                                {selectedPeriod === idx && (
-                                                    <div className="mt-3">
-                                                        <p className="text-sm text-gray-300">
-                                                            <strong>{periodo.obras.length}</strong> obra(s) en exposición
-                                                        </p>
-                                                    </div>
-                                                )}
-                                            </div>
+                                {hitosCronologia.map((hito, i) => (
+                                    <div key={i} className="relative group p-6 card-glass rounded-2xl hover:border-blue-500/50 transition duration-500">
+                                        <div className="w-12 h-12 rounded-full mb-6 flex items-center justify-center font-bold" style={{ backgroundColor: hito.color, color: i === 5 ? '#000' : '#fff' }}>
+                                            {i + 1}
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Obras principales destacadas */}
-                    <section className="py-20 px-4 md:px-8 bg-gray-950">
-                        <div className="max-w-6xl mx-auto">
-                            <h2 className="text-5xl font-bold mb-16 text-center">
-                                <span className="bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                                    Obras Maestras Destacadas
-                                </span>
-                            </h2>
-
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {[
-                                    { titulo: "Guernica", año: 1937, desc: "La obra más emblemática de Picasso" },
-                                    { titulo: "Les Demoiselles d'Avignon", año: 1907, desc: "Revoluciona el arte moderno" },
-                                    { titulo: "Girl Before a Mirror", año: 1932, desc: "Surrealismo en su máxima expresión" },
-                                    { titulo: "Weeping Woman", año: 1937, desc: "Angustia y expresión emocional" },
-                                    { titulo: "Las Meninas (variación)", año: 1957, desc: "Diálogo con los maestros" },
-                                    { titulo: "Paloma de la Paz", año: 1949, desc: "Símbolo de esperanza universal" }
-                                ].map((obra, idx) => (
-                                    <div key={idx} className="group cursor-pointer">
-                                        <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-lg border border-gray-700 hover:border-purple-500 transition h-full flex flex-col justify-between">
-                                            <div>
-                                                <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text mb-2">
-                                                    {obra.titulo}
-                                                </h3>
-                                                <p className="text-gray-400 mb-4">{obra.año}</p>
-                                                <p className="text-gray-300">{obra.desc}</p>
-                                            </div>
-                                            <div className="mt-6 pt-6 border-t border-gray-700">
-                                                <button className="text-purple-400 hover:text-purple-300 text-sm font-semibold group-hover:translate-x-2 transition">
-                                                    Ver Detalles →
-                                                </button>
-                                            </div>
-                                        </div>
+                                        <p className="text-xs font-mono mb-2" style={{ color: hito.color }}>{hito.epoca}</p>
+                                        <h3 className="text-xl font-bold mb-4">{hito.titulo}</h3>
+                                        <p className="text-sm text-gray-500 leading-relaxed">{hito.desc}</p>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </section>
 
-                    {/* Grid completo de 30 obras */}
-                    <section className="py-20 px-4 md:px-8 bg-black">
+                    {/* LAS 30 OBRAS MASTER */}
+                    <section className="py-24 px-6">
                         <div className="max-w-7xl mx-auto">
-                            <h2 className="text-5xl font-bold mb-16 text-center">
-                                <span className="bg-gradient-to-r from-teal-400 to-blue-400 bg-clip-text text-transparent">
-                                    Las 30 Obras de la Exposición
-                                </span>
-                            </h2>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                                {obras.map((obra) => (
-                                    <div key={obra.id} className="group">
-                                        <div className="bg-gray-900 rounded-lg p-4 border border-gray-800 hover:border-cyan-500 transition hover:-translate-y-1">
-                                            <div className="aspect-square bg-gradient-to-br from-blue-900 to-purple-900 rounded-lg mb-3 flex items-center justify-center relative overflow-hidden group">
-                                                <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition"></div>
-                                                <span className="text-gray-400 text-sm font-semibold relative z-10">Obra {obra.id}</span>
-                                            </div>
-                                            <h3 className="font-bold text-sm mb-1 line-clamp-2">{obra.titulo}</h3>
-                                            <p className="text-xs text-gray-400 mb-2">{obra.año}</p>
-                                            <div className="flex justify-between items-center text-xs">
-                                                <span className="text-gray-500">{obra.periodo}</span>
-                                                <div className="flex gap-1">
-                                                    {[...Array(obra.importancia)].map((_, i) => (
-                                                        <span key={i} className="text-yellow-400">★</span>
-                                                    ))}
-                                                </div>
+                            <h2 className="text-4xl md:text-6xl font-black mb-16 text-center italic">LAS 30 OBRAS EXPUESTAS</h2>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                                {obrasPicasso.map((obra) => (
+                                    <div key={obra.id} className="group relative bg-zinc-900/50 rounded-xl overflow-hidden border border-white/5 hover:border-blue-500/40 transition-all duration-500">
+                                        <div className="aspect-[3/4] bg-zinc-800 flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div>
+                                            <span className="text-7xl font-black text-white/5 absolute -bottom-4 -right-4 italic">{obra.id}</span>
+                                            <div className="relative z-10">
+                                                <i data-lucide="image" className="mx-auto mb-4 text-white/20" size={32}></i>
+                                                <p className="text-xs text-blue-400 font-mono mb-2 uppercase">{obra.periodo}</p>
+                                                <h4 className="font-serif text-lg leading-tight mb-2 group-hover:text-blue-300 transition">{obra.titulo}</h4>
+                                                <p className="text-sm text-gray-500">{obra.año}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -291,59 +180,47 @@
                         </div>
                     </section>
 
-                    {/* Call to Action */}
-                    <section className="py-20 px-4 md:px-8 bg-gradient-to-r from-blue-900 to-purple-900">
-                        <div className="max-w-4xl mx-auto text-center">
-                            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                                Vive la Revolución del Arte
-                            </h2>
-                            <p className="text-xl text-gray-200 mb-8">
-                                Descubre cómo Picasso transformó el arte moderno a través de sus 30 obras maestras en el Museo de Bellas Artes de Asturias.
-                            </p>
-                            <div className="flex flex-col md:flex-row gap-4 justify-center">
-                                <button className="px-8 py-4 bg-white text-purple-900 font-bold rounded-lg hover:bg-gray-100 transition">
-                                    Comprar Entrada
-                                </button>
-                                <button className="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-purple-900 transition">
-                                    Más Información
-                                </button>
+                    {/* MUSEO Y LOCALIZACIÓN */}
+                    <section className="py-24 px-6 bg-zinc-950">
+                        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+                            <div className="rounded-3xl overflow-hidden h-[400px] bg-zinc-800 flex items-center justify-center">
+                                <p className="text-gray-600 italic">Imagen Fachada Palacio de Velarde</p>
+                            </div>
+                            <div>
+                                <h2 className="text-4xl font-bold mb-6">MUSEO DE BELLAS ARTES DE ASTURIAS</h2>
+                                <p className="text-gray-400 mb-8 leading-relaxed">
+                                    El museo se sitúa en el centro histórico de Oviedo, ocupando tres edificios: el Palacio de Velarde, la Casa de Oviedo-Portal y el edificio de Ampliación. Un entorno único para la obra de Picasso.
+                                </p>
+                                <ul className="space-y-4 text-sm">
+                                    <li className="flex items-center gap-4 text-gray-300">
+                                        <i data-lucide="map-pin" className="text-blue-500" size={18}></i>
+                                        Calle de la Rúa, 8, 33003 Oviedo, Asturias
+                                    </li>
+                                    <li className="flex items-center gap-4 text-gray-300">
+                                        <i data-lucide="clock" className="text-blue-500" size={18}></i>
+                                        Mar-Sáb: 10:30-14:00 / 16:30-20:30
+                                    </li>
+                                    <li className="flex items-center gap-4 text-gray-300">
+                                        <i data-lucide="info" className="text-blue-500" size={18}></i>
+                                        Entrada Gratuita a la colección permanente
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </section>
 
-                    {/* Footer */}
-                    <footer className="bg-gray-900 py-12 px-4 md:px-8 border-t border-gray-800">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="grid md:grid-cols-3 gap-8 mb-8">
-                                <div>
-                                    <h3 className="font-bold text-lg mb-4 text-purple-400">Ubicación</h3>
-                                    <p className="text-gray-400 text-sm">Museo de Bellas Artes de Asturias, Oviedo</p>
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-lg mb-4 text-purple-400">Horarios</h3>
-                                    <p className="text-gray-400 text-sm">Mar-Vie: 10:30-20:30</p>
-                                    <p className="text-gray-400 text-sm">Sáb: 11:30-20:00</p>
-                                    <p className="text-gray-400 text-sm">Dom: 11:30-14:30</p>
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-lg mb-4 text-purple-400">Redes Sociales</h3>
-                                    <div className="flex gap-4">
-                                        <a href="#" className="text-gray-400 hover:text-purple-400 transition">Instagram</a>
-                                        <a href="#" className="text-gray-400 hover:text-purple-400 transition">Facebook</a>
-                                        <a href="#" className="text-gray-400 hover:text-purple-400 transition">Twitter</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
-                                <p>© 2025 Museo de Bellas Artes de Asturias. Exposición Temporal: Picasso - Visión de un Genio</p>
-                            </div>
-                        </div>
+                    <footer className="py-12 px-6 border-t border-white/5 text-center">
+                        <p className="text-gray-600 text-xs tracking-widest uppercase">
+                            © 2025 MUSEO DE BELLAS ARTES DE ASTURIAS • PROYECTO CULTURAL
+                        </p>
                     </footer>
                 </div>
             );
         }
 
-        createRoot(document.getElementById('root')).render(<App />);
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<App />);
     </script>
 </body>
 </html>
